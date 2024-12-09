@@ -1,8 +1,10 @@
 ---
 #runonceat.yaml
-# start once a job at a time / js /2024
+# start once a job at a time / rb /2024
 # benötigte Variablen:
 # "myhost" definiert die anzuwendenden hosts
+# "jobs" like "systemctl stop mysrvice"
+# "starttime" like "04:25" or so
 
 - hosts: "{{myhosts|lower}}"
   become: true
