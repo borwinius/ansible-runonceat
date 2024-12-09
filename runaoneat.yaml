@@ -1,0 +1,38 @@
+---
+#runonceat.yaml
+# start once a job at a time / js /2024
+# benötigte Variablen:
+# "myhost" definiert die anzuwendenden hosts
+
+- hosts: "{{myhosts|lower}}"
+  become: true
+  become_user: root
+##########
+  tasks:
+    - name: get packages
+      package_facts:
+#####
+    - name: "install or update at"
+      become: true
+      become_user: root
+      package:
+        name: "at"
+        state: latest
+      when:
+        - "'at' not in ansible_facts.packages"
+      register: must_installed
+#####
+    - name: "start service at, if not started"
+      service:
+        name: atd
+        state: started
+      register: must_started
+#####
+    - name: "configure a job {{job}} at starttime {{starttime}}"
+      shell: "echo {{job}} | at {{starttime}}"
+#####
+    - name: "stop service at 5 min later, like state before"
+      shell: "echo systemctl stop atd.service | at {{starttime}} +5 minutes"
+      when: must_started.changed == true
+#####
+...
